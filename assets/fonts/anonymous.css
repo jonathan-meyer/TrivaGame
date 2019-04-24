@@ -1,0 +1,11 @@
+/* Webfont */
+@font-face {
+  font-family: "Anonymous";
+  src: url("anonymous.woff2") format("woff2");
+  text-rendering: optimizeLegibility;
+  font-feature-settings: "kern" on;
+  -moz-font-feature-settings: "kern" on;
+  -webkit-font-feature-settings: "kern" on;
+  -ms-font-feature-settings: "kern" on;
+  -o-font-feature-settings: "kern" on;
+}
