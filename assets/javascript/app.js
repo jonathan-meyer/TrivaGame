@@ -45,41 +45,41 @@ define(["jquery", "jquery_ui", "answer"], function($) {
       }
     },
 
-    _createCategoryEl: function(name) {
+    _createCategoryEl: function(category) {
       return $("<div>")
         .addClass("game-category")
         .append(
           $("<div>")
-            .text(name)
+            .text(category)
             .addClass("game-category-header game-box"),
-          [200, 400, 600, 800, 1000].map(amount => $("<div>").answer({ amount, category: name }))
+          [200, 400, 600, 800, 1000].map(amount => $("<div>").answer({ amount, category }))
         );
     },
 
     _create: function() {
-      this.element
-        .append(
-          $("<div>")
-            .addClass("jumbotron")
-            .append(
-              $("<h1>")
-                .addClass("display-4 title-font")
-                .text("Trivia Game!"),
-              $("<p>")
-                .addClass("lead")
-                .text("A tribute to the best game show host ever."),
-              $("<hr>").addClass("my-4"),
-              $("<div>")
-                .append(
-                  $("<div>")
-                    .append(this.options.categories.map(c => this._createCategoryEl(c)))
-                    .addClass("game-board")
-                )
-                .addClass("game"),
-              $("<hr>").addClass("my-4")
-            )
-        )
-        .addClass("app");
+      this._addClass("app d-flex flex-column justify-content-center align-items-center h-100 w-100");
+
+      this._on(this.element, {
+        "click .game-answer": function(e) {
+          $(e.currentTarget).answer("open");
+        }
+      });
+
+      this.element.append(
+        $("<h1>")
+          .addClass("game-title display-4 ")
+          .text("Trivia Game!"),
+        $("<p>")
+          .addClass("game-byline lead")
+          .text("A tribute to the best game show host ever."),
+        $("<div>")
+          .addClass("game")
+          .append(
+            $("<div>")
+              .addClass("game-board")
+              .append(this.options.categories.map(c => this._createCategoryEl(c)))
+          )
+      );
     }
   });
 });

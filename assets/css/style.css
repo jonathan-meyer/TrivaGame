@@ -1,5 +1,24 @@
-.title-font {
+html {
+  height: 100%;
+}
+
+body {
+  height: 100%;
+  background-image: url("../images/background.jpg");
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center center;
+}
+
+.game-title {
   font-family: Anonymous;
+  color: black;
+  text-shadow: 1px 1px 3px white;
+}
+
+.game-byline {
+  color: black;
+  text-shadow: 1px 1px 3px white;
 }
 
 .game {
@@ -11,6 +30,7 @@
   border: 2.5px solid black;
   display: flex;
   justify-content: center;
+  box-shadow: 10px 10px 20px 10px rgba(0, 0, 0, 0.5);
 }
 
 .game-box {
@@ -36,12 +56,26 @@
   line-height: 1em;
 }
 
-.game-category-amount {
+.game-answer-clue {
+  color: white;
+  background-color: rgb(17, 17, 133);
+  border: 5px solid black;
+  font-size: 4vw;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.game-answer-amount {
   color: rgb(220, 190, 86);
   font-size: 2.5em;
   cursor: pointer;
 }
 
-.game-category-amount::before {
+.game-answer-amount::before {
   content: "$";
+}
+
+.selected {
+  border-color: red;
 }
