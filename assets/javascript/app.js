@@ -1,4 +1,4 @@
-(function($) {
+define(["jquery", "jquery_ui", "answer"], function($) {
   $.widget("stej.app", {
     options: {
       categories: ["Potpourri"],
@@ -52,14 +52,7 @@
           $("<div>")
             .text(name)
             .addClass("game-category-header game-box"),
-          [200, 400, 600, 800, 1000].map(amount =>
-            $("<div>")
-              .text(amount)
-              .addClass("game-category-amount game-box")
-              .click(() => {
-                console.log(name + " for $" + amount + " Alex!");
-              })
-          )
+          [200, 400, 600, 800, 1000].map(amount => $("<div>").answer({ amount, category: name }))
         );
     },
 
@@ -89,4 +82,4 @@
         .addClass("app");
     }
   });
-})(jQuery);
+});
