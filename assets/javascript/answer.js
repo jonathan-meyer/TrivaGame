@@ -7,6 +7,8 @@ define(["jquery", "jquery_ui"], function($) {
     },
 
     open() {
+      console.log([this.options.category, this.options.amount, "open"].join("_"));
+
       // unselect all other items
       $(".selected").removeClass("selected");
 
@@ -22,7 +24,7 @@ define(["jquery", "jquery_ui"], function($) {
               step: () => {
                 var w = this.clueEl.width();
                 var h = this.clueEl.height();
-                
+
                 $("#fitin div").css("font-size", "1em");
 
                 while ($("#fitin div").height() > $("#fitin").height()) {
@@ -35,22 +37,40 @@ define(["jquery", "jquery_ui"], function($) {
       });
     },
 
-    _init: function() {
-      // console.log(this.options.category + " _init");
+    data: function(data) {
+      console.log([this.options.category, this.options.amount, "data"].join("_"));
 
-      this.amountEl.text(this.options.amount);
-      this.clueEl.text("unknown");
+      this.options.data = data;
+
+      this.clueEl.text(this.options.data.question);
+      this.answers = this._shuffle([this.options.data.correct_answer, ...this.options.data.incorrect_answers]);
+    },
+
+    _shuffle: function(items) {
+      var _items = [...items];
+      var shuffled = [];
+
+      while (_items.length > 0) {
+        shuffled = [...shuffled, ..._items.splice(Math.round(Math.random() * 100) % _items.length, 1)];
+      }
+
+      return shuffled;
+    },
+
+    _init: function() {
+      console.log([this.options.category, this.options.amount, "init"].join("_"));
     },
 
     _create: function() {
-      // console.log(this.options.category + " _create");
+      console.log([this.options.category, this.options.amount, "create"].join("_"));
 
       this._addClass("game-answer game-box");
 
       this.clueEl = $("<div>")
-        .addClass("game-answer-clue fittext")
+        .addClass("game-answer-clue")
         .hide();
       this.amountEl = $("<div>")
+        .text(this.options.amount)
         .addClass("game-answer-amount")
         .show();
 

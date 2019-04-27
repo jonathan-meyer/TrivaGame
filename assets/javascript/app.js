@@ -7,9 +7,7 @@ define(["jquery", "jquery_ui", "answer"], function($) {
     },
 
     _init: function() {
-      this.game_data = eval(sessionStorage.getItem("game_data"));
-
-      if (this.game_data == null) {
+      if (eval(sessionStorage.getItem("game_data")) == null) {
         $.ajax(this.options.api_categoriy_url).then(({ trivia_categories }) => {
           Promise.all(
             this.options.categories
@@ -39,10 +37,28 @@ define(["jquery", "jquery_ui", "answer"], function($) {
                   .catch(err => console.log(err))
               )
           )
-            .then(data => sessionStorage.setItem("game_data", JSON.stringify(data)))
+            .then(data => {
+              sessionStorage.setItem("game_data", JSON.stringify(data));
+              this._update();
+            })
+
             .catch(err => console.log(err));
         });
+      } else {
+        this._update();
       }
+    },
+
+    _update: function() {
+      var game_data = eval(sessionStorage.getItem("game_data"));
+
+      this.categoriesEl.map(categoryEl => {
+        var category = categoryEl.find(".game-category-header").text();
+
+        game_data
+          .filter(c => c.category === category)
+          .map(category_data => category_data.questions && categoryEl.find(".game-answer").each((x, el) => $(el).answer("data", category_data.questions[x])));
+      });
     },
 
     _createCategoryEl: function(category) {
@@ -65,6 +81,8 @@ define(["jquery", "jquery_ui", "answer"], function($) {
         }
       });
 
+      this.categoriesEl = this.options.categories.map(c => this._createCategoryEl(c));
+
       this.element.append(
         $("<h1>")
           .addClass("game-title display-4 ")
@@ -77,7 +95,7 @@ define(["jquery", "jquery_ui", "answer"], function($) {
           .append(
             $("<div>")
               .addClass("game-board")
-              .append(this.options.categories.map(c => this._createCategoryEl(c)))
+              .append(this.categoriesEl)
           )
       );
     }
