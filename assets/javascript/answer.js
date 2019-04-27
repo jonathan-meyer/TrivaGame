@@ -7,43 +7,51 @@ define(["jquery", "jquery_ui"], function($) {
     },
 
     open() {
-      console.log([this.options.category, this.options.amount, "open"].join("_"));
+      // console.log([this.options.category, this.options.amount, "open"].join("_"));
+      var widget = this;
 
-      // unselect all other items
-      $(".selected").removeClass("selected");
+      widget.clueEl.dialog({
+        width: 640,
+        height: 480,
+        autoOpen: true,
+        modal: true,
+        resizable: false,
+        draggable: false,
+        closeOnEscape: false,
+        buttons: widget.questions.map(ans => ({
+          text: ans,
+          click: function(event) {
+            widget._trigger("ask", event, {
+              selection: $(event.target).text(),
+              correctQuestion: widget.correctQuestion,
+              result: $(event.target).text() === widget.correctQuestion ? "Correct" : "Wrong"
+            });
 
-      // select this item
-      this._addClass("selected");
-
-      this.amountEl.hide("fade", 200, () => {
-        this.clueEl.show("fade", 200, () => {
-          this.clueEl.css({ position: "absolute" }).animate(
-            { width: 640, height: 480 },
-            {
-              duration: 800,
-              step: () => {
-                var w = this.clueEl.width();
-                var h = this.clueEl.height();
-
-                $("#fitin div").css("font-size", "1em");
-
-                while ($("#fitin div").height() > $("#fitin").height()) {
-                  $("#fitin div").css("font-size", parseInt($("#fitin div").css("font-size")) - 1 + "px");
-                }
-              }
-            }
-          );
-        });
+            widget.clueEl.dialog("close");
+            widget.amountEl.hide("fade", 200);
+          }
+        })),
+        show: {
+          effect: "fade",
+          duration: 500
+        },
+        classes: {
+          "ui-button": "btn btn-primary"
+        },
+        open: function() {
+          widget.clueEl.css("font-size", widget.clueEl.width() * 0.1 - 10);
+        }
       });
     },
 
     data: function(data) {
-      console.log([this.options.category, this.options.amount, "data"].join("_"));
+      // console.log([this.options.category, this.options.amount, "data"].join("_"));
 
       this.options.data = data;
 
-      this.clueEl.text(this.options.data.question);
-      this.answers = this._shuffle([this.options.data.correct_answer, ...this.options.data.incorrect_answers]);
+      this.clueEl.html(this.options.data.question);
+      this.correctQuestion = this.options.data.correct_answer;
+      this.questions = this._shuffle([this.options.data.correct_answer, ...this.options.data.incorrect_answers]);
     },
 
     _shuffle: function(items) {
@@ -58,11 +66,11 @@ define(["jquery", "jquery_ui"], function($) {
     },
 
     _init: function() {
-      console.log([this.options.category, this.options.amount, "init"].join("_"));
+      // console.log([this.options.category, this.options.amount, "init"].join("_"));
     },
 
     _create: function() {
-      console.log([this.options.category, this.options.amount, "create"].join("_"));
+      // console.log([this.options.category, this.options.amount, "create"].join("_"));
 
       this._addClass("game-answer game-box");
 

@@ -68,7 +68,15 @@ define(["jquery", "jquery_ui", "answer"], function($) {
           $("<div>")
             .text(category)
             .addClass("game-category-header game-box"),
-          [200, 400, 600, 800, 1000].map(amount => $("<div>").answer({ amount, category }))
+          [200, 400, 600, 800, 1000].map(amount =>
+            $("<div>").answer({
+              amount,
+              category,
+              ask: function(event, data) {
+                console.log({ event, data });
+              }
+            })
+          )
         );
     },
 

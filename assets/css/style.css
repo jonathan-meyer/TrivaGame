@@ -58,12 +58,13 @@ body {
 
 .game-answer-clue {
   color: white;
-  background-color: rgb(17, 17, 133);
-  border: 5px solid black;
-  font-size: 4vw;
+  background-color: rgb(17, 17, 133) !important;
+  border: 5px solid black !important;
+  font-size: 1em;
   display: flex;
   justify-content: center;
   align-items: center;
+  text-shadow: 5px 3px 2px black;
 }
 
 .game-answer-amount {
@@ -78,4 +79,17 @@ body {
 
 .selected {
   border-color: red;
+}
+
+.ui-dialog {
+  box-shadow: 10px 10px 20px 10px rgba(0, 0, 0, 0.5);
+}
+
+.ui-widget.ui-widget-content {
+  border-color: transparent;
+}
+
+.ui-dialog-titlebar,
+.no-close .ui-dialog-titlebar-close {
+  display: none;
 }
