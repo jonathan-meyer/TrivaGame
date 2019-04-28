@@ -50,9 +50,10 @@ define(["jquery", "jquery_ui", "answer"], function($) {
     },
 
     _update: function() {
+      var widget = this;
       var game_data = eval(sessionStorage.getItem("game_data"));
 
-      this.categoriesEl.map(categoryEl => {
+      widget.categoriesEl.map(categoryEl => {
         var category = categoryEl.find(".game-category-header").text();
 
         game_data
@@ -63,12 +64,15 @@ define(["jquery", "jquery_ui", "answer"], function($) {
               $(el).answer({
                 answer: questions[x].question,
                 questions: [questions[x].correct_answer, ...questions[x].incorrect_answers],
-                response: function(event, data) {
+                onResponse: function(event, data) {
                   if (data.selection === questions[x].correct_answer) {
                     console.log("Correct!");
                   } else {
                     console.log('Wrong: The correct question is "What is ' + questions[x].correct_answer + '?"');
                   }
+                },
+                onTimeout: function(event, data) {
+                  console.log('Times up: The correct question is "What is ' + questions[x].correct_answer + '?"');
                 }
               });
             });
