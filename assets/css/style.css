@@ -65,7 +65,7 @@ body {
   justify-content: center;
   align-items: center;
   text-shadow: 5px 3px 2px black;
-  overflow: hidden!important;
+  overflow: hidden !important;
 }
 
 .game-answer-amount {
@@ -93,4 +93,27 @@ body {
 .ui-dialog-titlebar,
 .no-close .ui-dialog-titlebar-close {
   display: none;
+}
+
+.game-score {
+  color: white;
+  background-color: rgb(17, 17, 133) !important;
+  border: 5px solid black !important;
+  font-size: 2em;
+  font-family: "Courier New", Courier, monospace;
+  font-weight: bold;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-shadow: 5px 3px 2px black;
+  margin: 10px;
+  padding: 5px 10px;
+}
+
+.game-score-negative {
+  color: red;
+}
+
+.game-score:before {
+  content: "$";
 }

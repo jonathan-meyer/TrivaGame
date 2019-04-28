@@ -53,6 +53,8 @@ define(["jquery", "jquery_ui", "answer"], function($) {
       var widget = this;
       var game_data = eval(sessionStorage.getItem("game_data"));
 
+      widget._updateScore(0);
+
       widget.categoriesEl.map(categoryEl => {
         var category = categoryEl.find(".game-category-header").text();
 
@@ -67,17 +69,66 @@ define(["jquery", "jquery_ui", "answer"], function($) {
                 onResponse: function(event, data) {
                   if (data.selection === questions[x].correct_answer) {
                     console.log("Correct!");
+                    widget._updateScore(data.amount);
                   } else {
-                    console.log('Wrong: The correct question is "What is ' + questions[x].correct_answer + '?"');
+                    $("<div>")
+                      .text('Wrong: The correct question is "What is ' + questions[x].correct_answer + '?"')
+                      .dialog({
+                        modal: true,
+                        resizable: false,
+                        buttons: [
+                          {
+                            text: "Ok",
+                            click: function() {
+                              $(this).dialog("close");
+                            }
+                          }
+                        ]
+                      });
+
+                    widget._updateScore(-data.amount);
                   }
                 },
                 onTimeout: function(event, data) {
-                  console.log('Times up: The correct question is "What is ' + questions[x].correct_answer + '?"');
+                  $("<div>")
+                    .text('Times up: The correct question is "What is ' + questions[x].correct_answer + '?"')
+                    .dialog({
+                      modal: true,
+                      resizable: false,
+                      buttons: [
+                        {
+                          text: "Ok",
+                          click: function() {
+                            $(this).dialog("close");
+                          }
+                        }
+                      ]
+                    });
+
+                  widget._updateScore(-data.amount);
                 }
               });
             });
           });
       });
+
+      widget._on(this.element, {
+        "click .game-answer": function(e) {
+          $(e.currentTarget).answer("open");
+        }
+      });
+    },
+
+    _updateScore(score) {
+      this.score = parseInt(this.score || 0) + score;
+
+      this.scoreEl.text(this.score);
+
+      if (this.score < 0) {
+        this.scoreEl.addClass("game-score-negative");
+      } else {
+        this.scoreEl.removeClass("game-score-negative");
+      }
     },
 
     _createCategoryEl: function(category) {
@@ -99,13 +150,9 @@ define(["jquery", "jquery_ui", "answer"], function($) {
     _create: function() {
       this._addClass("app d-flex flex-column justify-content-center align-items-center h-100 w-100");
 
-      this._on(this.element, {
-        "click .game-answer": function(e) {
-          $(e.currentTarget).answer("open");
-        }
-      });
-
       this.categoriesEl = this.options.categories.map(c => this._createCategoryEl(c));
+
+      this.scoreEl = $("<div>");
 
       this.element.append(
         $("<h1>")
@@ -120,7 +167,8 @@ define(["jquery", "jquery_ui", "answer"], function($) {
             $("<div>")
               .addClass("game-board")
               .append(this.categoriesEl)
-          )
+          ),
+        this.scoreEl.addClass("game-score")
       );
     }
   });

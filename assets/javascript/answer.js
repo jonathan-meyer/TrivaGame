@@ -5,7 +5,7 @@ define(["jquery", "jquery_ui"], function($) {
       category: "",
       answer: "",
       questions: [],
-      timeout: 5
+      timeout: 10
     },
 
     open() {
@@ -24,7 +24,8 @@ define(["jquery", "jquery_ui"], function($) {
           click: function(event) {
             widget._stopTimer();
             widget._trigger("onResponse", event, {
-              selection: $(event.target).text()
+              selection: $(event.target).text(),
+              amount: widget.options.amount
             });
             widget.clueEl.dialog("close");
           }
@@ -53,6 +54,7 @@ define(["jquery", "jquery_ui"], function($) {
             width = el.width();
             height = el.height();
 
+            console.log({ width: widget.clueEl.width(), height: widget.clueEl.height() });
             el.remove();
           }
 
@@ -62,7 +64,9 @@ define(["jquery", "jquery_ui"], function($) {
 
             if (timerEl.progressbar("value") <= 0) {
               widget._stopTimer();
-              widget._trigger("onTimeout");
+              widget._trigger("onTimeout", null, {
+                amount: widget.options.amount
+              });
               widget.clueEl.dialog("close");
             }
           }, 100);
@@ -92,6 +96,16 @@ define(["jquery", "jquery_ui"], function($) {
       return shuffled;
     },
 
+    _setOptions: function(options) {
+      this._super(options);
+
+      if (this.options.answer && this.options.answer.length > 0) {
+        this.amountEl.show();
+      } else {
+        this.amountEl.hide();
+      }
+    },
+
     _create: function() {
       this._addClass("game-answer game-box");
 
@@ -101,7 +115,7 @@ define(["jquery", "jquery_ui"], function($) {
       this.amountEl = $("<div>")
         .text(this.options.amount)
         .addClass("game-answer-amount")
-        .show();
+        .hide();
 
       this.element.append(this.amountEl, this.clueEl);
     }
