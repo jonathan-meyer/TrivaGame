@@ -4,7 +4,8 @@ define(["jquery", "jquery_ui"], function($) {
       amount: 0,
       category: "",
       answer: "",
-      questions: []
+      questions: [],
+      timeout: 5
     },
 
     open() {
@@ -21,12 +22,11 @@ define(["jquery", "jquery_ui"], function($) {
         buttons: widget._shuffle(widget.options.questions).map(question => ({
           text: question,
           click: function(event) {
-            widget._trigger("response", event, {
+            widget._stopTimer();
+            widget._trigger("onResponse", event, {
               selection: $(event.target).text()
             });
-
             widget.clueEl.dialog("close");
-            widget.amountEl.hide("fade", 200);
           }
         })),
         show: {
@@ -37,6 +37,10 @@ define(["jquery", "jquery_ui"], function($) {
           "ui-button": "btn btn-primary"
         },
         open: function() {
+          var timerEl = $("<div>").progressbar({ max: widget.options.timeout * 10, value: widget.options.timeout * 10 });
+
+          $(this).after(timerEl);
+
           var width = widget.clueEl.width() + 1;
           var height = widget.clueEl.height() + 1;
 
@@ -53,8 +57,28 @@ define(["jquery", "jquery_ui"], function($) {
           }
 
           widget.clueEl.css({ fontSize: size });
+          widget.timer = setInterval(() => {
+            timerEl.progressbar("value", timerEl.progressbar("value") - 1);
+
+            if (timerEl.progressbar("value") <= 0) {
+              widget._stopTimer();
+              widget._trigger("onTimeout");
+              widget.clueEl.dialog("close");
+            }
+          }, 100);
+        },
+
+        close: function() {
+          widget.amountEl.hide("fade", 200);
         }
       });
+    },
+
+    _stopTimer() {
+      if (this.timer) {
+        clearInterval(this.timer);
+        this.timer = null;
+      }
     },
 
     _shuffle: function(items) {
