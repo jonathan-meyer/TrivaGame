@@ -3,14 +3,14 @@ define(["jquery", "jquery_ui"], function($) {
     options: {
       amount: 0,
       category: "",
-      data: {}
+      answer: "",
+      questions: []
     },
 
     open() {
-      // console.log([this.options.category, this.options.amount, "open"].join("_"));
       var widget = this;
 
-      widget.clueEl.dialog({
+      widget.clueEl.html(widget.options.answer).dialog({
         width: 640,
         height: 480,
         autoOpen: true,
@@ -18,13 +18,11 @@ define(["jquery", "jquery_ui"], function($) {
         resizable: false,
         draggable: false,
         closeOnEscape: false,
-        buttons: widget.questions.map(ans => ({
-          text: ans,
+        buttons: widget._shuffle(widget.options.questions).map(question => ({
+          text: question,
           click: function(event) {
-            widget._trigger("ask", event, {
-              selection: $(event.target).text(),
-              correctQuestion: widget.correctQuestion,
-              result: $(event.target).text() === widget.correctQuestion ? "Correct" : "Wrong"
+            widget._trigger("response", event, {
+              selection: $(event.target).text()
             });
 
             widget.clueEl.dialog("close");
@@ -39,19 +37,24 @@ define(["jquery", "jquery_ui"], function($) {
           "ui-button": "btn btn-primary"
         },
         open: function() {
-          widget.clueEl.css("font-size", widget.clueEl.width() * 0.1 - 10);
+          var width = widget.clueEl.width() + 1;
+          var height = widget.clueEl.height() + 1;
+
+          for (var size = 50; width > widget.clueEl.width() || height > widget.clueEl.height(); size--) {
+            var el = $("<div>")
+              .css({ fontSize: size, display: "inline-block", maxWidth: widget.clueEl.width(), border: "1px solid red" })
+              .text(widget.clueEl.text())
+              .appendTo("body");
+
+            width = el.width();
+            height = el.height();
+
+            el.remove();
+          }
+
+          widget.clueEl.css({ fontSize: size });
         }
       });
-    },
-
-    data: function(data) {
-      // console.log([this.options.category, this.options.amount, "data"].join("_"));
-
-      this.options.data = data;
-
-      this.clueEl.html(this.options.data.question);
-      this.correctQuestion = this.options.data.correct_answer;
-      this.questions = this._shuffle([this.options.data.correct_answer, ...this.options.data.incorrect_answers]);
     },
 
     _shuffle: function(items) {
@@ -65,13 +68,7 @@ define(["jquery", "jquery_ui"], function($) {
       return shuffled;
     },
 
-    _init: function() {
-      // console.log([this.options.category, this.options.amount, "init"].join("_"));
-    },
-
     _create: function() {
-      // console.log([this.options.category, this.options.amount, "create"].join("_"));
-
       this._addClass("game-answer game-box");
 
       this.clueEl = $("<div>")

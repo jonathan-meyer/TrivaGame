@@ -65,6 +65,7 @@ body {
   justify-content: center;
   align-items: center;
   text-shadow: 5px 3px 2px black;
+  overflow: hidden!important;
 }
 
 .game-answer-amount {

@@ -57,7 +57,22 @@ define(["jquery", "jquery_ui", "answer"], function($) {
 
         game_data
           .filter(c => c.category === category)
-          .map(category_data => category_data.questions && categoryEl.find(".game-answer").each((x, el) => $(el).answer("data", category_data.questions[x])));
+          .map(category_data => {
+            var { questions } = category_data;
+            categoryEl.find(".game-answer").each((x, el) => {
+              $(el).answer({
+                answer: questions[x].question,
+                questions: [questions[x].correct_answer, ...questions[x].incorrect_answers],
+                response: function(event, data) {
+                  if (data.selection === questions[x].correct_answer) {
+                    console.log("Correct!");
+                  } else {
+                    console.log('Wrong: The correct question is "What is ' + questions[x].correct_answer + '?"');
+                  }
+                }
+              });
+            });
+          });
       });
     },
 
@@ -71,10 +86,7 @@ define(["jquery", "jquery_ui", "answer"], function($) {
           [200, 400, 600, 800, 1000].map(amount =>
             $("<div>").answer({
               amount,
-              category,
-              ask: function(event, data) {
-                console.log({ event, data });
-              }
+              category
             })
           )
         );
